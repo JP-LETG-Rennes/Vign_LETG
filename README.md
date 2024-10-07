@@ -54,17 +54,11 @@ pip install -r requirements_env.txt
 ```
 
 Getting Started
----------------
-If Using Notebook:
+--------------- 
 
-      1. Download build from source by following the previous steps in the conda prompt terminal.
-      2. Activate Conda Environnement Hiclass with following command : activate Hiclass
-      3. Launching jupyter notebook from conda terminal with following command : jupyter notebook
-      4. Lauching via terminal Hiclass.ipynb 
-
-If Using Terminal:
+Using Terminal:
 
       1. Download build from source. 
-      2. Activate Conda Environnement Hiclass
-      3. Enter variables in configuration file : configuration_RF_hiearchique.json
-      4. Launching via terminal Hiclass.py
+      2. Activate Conda Environnement Vign
+      3. Enter variables in configuration file : config_PRORPRO.json
+      4. Launching via terminal main_PRORPRO.py
