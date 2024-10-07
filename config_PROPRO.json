@@ -1,0 +1,10 @@
+{"path_sentinel": "/home/adr2.local/pellen_j/DONNEES_DRONE_PAUL/DONNEES_JULIEN/RIVE_GAUCHE/RIVE_GAUCHE_2021_ROUGE.tif",
+  "pathortho":"" ,
+  "lieu": "Rennes",
+  "path_vignette": "/home/adr2.local/pellen_j/Test_vign/",
+  "taille_vignette": 218,
+  "zone": [1,2,3,4],
+  "path_Imp": "",
+  "seuil": 10,
+  "nombre_classe_kmeans":""
+}
