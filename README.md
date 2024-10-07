@@ -37,12 +37,12 @@ Once the prerequisites have been installed, you can launch the next section via 
 
 ```
 # Clone the repo
-git clone https://github.com/JP-LETG-Rennes/RandomForest_Hiear.git
-cd RF_Hiearchique
+git clone https://github.com/JP-LETG-Rennes/Vign_LETG.git
+cd Vign_LETG
 
 # Create a new python environnement with conda  
-conda create --name Hiclass python=3.9
-conda activate Hiclass
+conda create --name Vign python=3.9
+conda activate Vign
 
 # Prepare pip
 conda install pip
