@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import time
-from PROPRO import ImgData
+from PROPRO2 import ImgData
 import json
 
 # ============================================================= Programme Principale =====================================================================================
@@ -9,7 +9,7 @@ import json
 if __name__ == "__main__" :
     debut_programme = time.time()
 
-    with open("/home/ju/PycharmProjects/AI/Stage_M2/Data_preprare/config_PROPRO.json", "r") as fileConf :
+    with open("config_PROPRO.json", "r") as fileConf:
         conf = json.load(fileConf)
 
     pathS2 = conf["path_sentinel"]
@@ -27,23 +27,18 @@ if __name__ == "__main__" :
 
     time_chargement_img = time.time()
 
-    S2 = ImgData(pathS2, "S2", zone, lieu)
-
-    Ortho = ImgData(path_ortho, "ORTHO", zone, lieu)
-
-    Imp = ImgData(path_imp, "IMP", zone, lieu)
+    S2 = ImgData(pathS2, zone, lieu)
 
     fin_charg_img = time.time()
 
     print('Temps de chargement image : ', fin_charg_img - time_chargement_img)
 
     # ============================================== Découpage Vignette ================================================
-
+"""
     debut_crop = time.time()
 
-    sen = ImgData.crop_vig_sta(S2, Taillevignette, path_vignette)
-    ort = ImgData.crop_vig_sta(Ortho, Taillevignette, path_vignette)
-    limp = ImgData.crop_vig_sta(Imp, Taillevignette, path_vignette)
+    sen = ImgData.CropVigSta(S2, Taillevignette, path_vignette,seuil)
+
 
     fin_crop = time.time()
     print("Temps CropVignette : ", fin_crop - debut_crop)
@@ -66,3 +61,4 @@ if __name__ == "__main__" :
 
     print("Temps de traitement total : ", fin_programme - debut_programme)
 
+"""

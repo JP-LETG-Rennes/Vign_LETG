@@ -19,15 +19,15 @@ from sklearn.cluster import KMeans
 
 class ImgData:
 
-    def __init__(self, pathdossier, product, zone, lieu):
+    def __init__(self, pathdossier, zone, lieu, product= 'SIMG'):
         """
         :param pathdossier:
         :param product:
         :param zone:
         :param lieu:
         """
-
         xMin, xMax, yMin, yMax = zone
+
 
         if product == 'S2':
 
@@ -164,6 +164,18 @@ class ImgData:
                 print("Vous n'avez pas la bonne option sur les produits satellitaires, pour UA")
                 pass
 
+        elif product == "SIMG":
+
+            path_img = pathdossier
+
+            ds = gdal.Open(path_img).ReadAsArray()
+
+            self.band = ds
+            self.product = product
+            self.lieu = lieu
+
+
+
     def CropVigSta(self, TailleVignette, Path_Output, Zcouvert):
 
         try:
@@ -233,8 +245,6 @@ class ImgData:
                             except UserWarning :
                                 print("Except activé")
                                 continue
-
-
 
             elif self.product == 'ORTHO':
 
@@ -334,7 +344,62 @@ class ImgData:
 
                                 countband += 1
 
-        except NotADirectoryError :
+            elif self.product == "SIMG":
+
+                count = 0
+
+                for x in range(ceil(np.shape(self.band)[0] / (ratio_taillevignette[2] * Zcouvert))):
+
+                    for y in range(ceil(np.shape(self.band)[1] / (ratio_taillevignette[2] * Zcouvert))):
+
+                        count += 1
+
+                        countband = 2
+
+
+                        if x == 0:
+
+                                    vign = self.band[int((x * ratio_taillevignette[2])): int((x + 1) * ratio_taillevignette[2]),
+                                           int(((y * ratio_taillevignette[2]) * Zcouvert)):int(
+                                               (y * ratio_taillevignette[2]) * Zcouvert) + (ratio_taillevignette[2])]
+
+                                    if vign.shape[0] == ratio_taillevignette[2] and vign.shape[1] == \
+                                            ratio_taillevignette[2]:
+
+                                        new_key = str(self.product) + '_' + str(
+                                            vign.shape[0]) + '_' + str('10m') \
+                                                  + '_' + 'B' + str(countband) + '_' + (
+                                                          4 - len(str(count))) * '0' + str(count) + '_' + str(
+                                            self.lieu)
+
+                                        Image.fromarray(vign).save(os.path.join(Path_Output, new_key) + '.tif')
+
+                                        countband += 1
+                        else:
+
+                                    vign = self.band[int((x * ratio_taillevignette[2]) * Zcouvert):int(
+                                        ((x * ratio_taillevignette[2]) * Zcouvert) + (ratio_taillevignette[2])),
+                                           int(((y * ratio_taillevignette[2]) * Zcouvert)):int(
+                                               ((((y)) * ratio_taillevignette[2]) * Zcouvert) + (
+                                                   ratio_taillevignette[2]))]
+
+                                    if vign.shape[0] == ratio_taillevignette[2] and vign.shape[1] == \
+                                            ratio_taillevignette[2]:
+
+                                        new_key = str(self.product) + '_' + str(
+                                            vign.shape[0]) + '_' + str('10m') \
+                                                  + '_' + 'B' + str(countband) + '_' + (
+                                                          4 - len(str(count))) * '0' + str(count) + '_' + str(
+                                            self.lieu)
+
+                                        Image.fromarray(vign).save(os.path.join(Path_Output, new_key) + '.tif')
+
+                                        countband += 1
+                                    else:
+                                        continue
+
+
+        except NotADirectoryError:
             print("Crop Statique ne marche pas!!!")
             sys.exit(1)
 
