@@ -1,10 +1,15 @@
-{"path_sentinel": "/home/adr2.local/pellen_j/DONNEES_DRONE_PAUL/DONNEES_JULIEN/RIVE_GAUCHE/RIVE_GAUCHE_2021_ROUGE.tif",
+{
+  "_commentaire": "Liste possible pour product_mode : S2, ORTHO, UA, Single_img, Multi_img",
+  "path_sentinel": "/home/adr2.local/pellen_j/Projet_Laura_Samuel/Stack_Temp/test_vignette/",
   "pathortho":"" ,
   "lieu": "Rennes",
   "path_vignette": "/home/adr2.local/pellen_j/Test_vign/",
-  "taille_vignette": 218,
+  "taille_vignette": 126,
   "zone": [1,2,3,4],
   "path_Imp": "",
-  "seuil": 10,
-  "nombre_classe_kmeans":""
+  "Recouvrement": 10,
+  "nombre_classe_kmeans":"",
+  "product_mode": "Multi_img"
 }
+
+

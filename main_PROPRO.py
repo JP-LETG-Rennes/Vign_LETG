@@ -19,25 +19,25 @@ if __name__ == "__main__" :
     Taillevignette = conf["taille_vignette"]
     zone = conf["zone"]
     path_imp = conf["path_Imp"]
-    seuil = conf["seuil"]
+    Recouvrement = conf["Recouvrement"]
     nbclass = conf["nombre_classe_kmeans"]
-
+    product_mode =conf["product_mode"]
     # ======================================== Zone d'essai de la classe ===============================================
 
 
     time_chargement_img = time.time()
 
-    S2 = ImgData(pathS2, zone, lieu)
+    S2 = ImgData(pathS2, zone, lieu, product_mode)
 
     fin_charg_img = time.time()
 
     print('Temps de chargement image : ', fin_charg_img - time_chargement_img)
 
     # ============================================== Découpage Vignette ================================================
-"""
+
     debut_crop = time.time()
 
-    sen = ImgData.CropVigSta(S2, Taillevignette, path_vignette,seuil)
+    sen = ImgData.CropVigSta(S2, Taillevignette, path_vignette, Recouvrement)
 
 
     fin_crop = time.time()
@@ -47,18 +47,15 @@ if __name__ == "__main__" :
 
     debut_tri = time.time()
 
-    S2.tri_vignette(path_vignette)
+    S2.TriVignette(path_vignette)
 
     fin_tri = time.time()
     print("Temps pour le tri vignette : ", fin_tri - debut_tri)
 
-    Imp.data_recap(path_vignette, seuil)
 
-    ImgData.class_imper(path_vignette, nbclass)
+
 
 
     fin_programme = time.time()
 
     print("Temps de traitement total : ", fin_programme - debut_programme)
-
-"""

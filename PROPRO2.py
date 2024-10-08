@@ -8,6 +8,8 @@ import json
 import sys
 import os
 import shutil as sh
+
+import matplotlib.pyplot as plt
 import numpy as np
 from osgeo import gdal
 from math import ceil
@@ -19,7 +21,7 @@ from sklearn.cluster import KMeans
 
 class ImgData:
 
-    def __init__(self, pathdossier, zone, lieu, product= 'SIMG'):
+    def __init__(self, pathdossier, zone, lieu, product):
         """
         :param pathdossier:
         :param product:
@@ -67,7 +69,7 @@ class ImgData:
                 self.SCL = dic_band["SCL"]
                 self.TCI =dic_band["TCI"]
                 self.VIS = dic_band["VIS"]
-                self.WVP=dic_band["WVP"]
+                self.WVP = dic_band["WVP"]
                 self.product = product
                 #self.date = date
                 self.lieu = lieu
@@ -164,7 +166,7 @@ class ImgData:
                 print("Vous n'avez pas la bonne option sur les produits satellitaires, pour UA")
                 pass
 
-        elif product == "SIMG":
+        elif product == "Single_img":
 
             path_img = pathdossier
 
@@ -174,7 +176,48 @@ class ImgData:
             self.product = product
             self.lieu = lieu
 
+        elif product == "Multi_img":
 
+            path_file = [os.path.join(pathdossier,file) for file in os.listdir(pathdossier)]
+
+            state_stack = None
+            dic_band = {}
+
+            #Check si img stack
+            test_stack = np.shape(gdal.Open(path_file[0]).ReadAsArray())
+            if len(test_stack) > 2:
+                state_stack = True
+            else:
+                state_stack = False
+
+            if state_stack is True:
+
+                dic_img = {}
+
+                for e in path_file:
+                    ds = gdal.Open(e).ReadAsArray()
+                    l_band = []
+                    for i in range(test_stack[0]):
+                        band = ds[i,:,:]
+                        l_band.append(band)
+                        name_band = f"{e[:-4]}_Bande_{i}"
+                        dic_band[name_band] = band
+
+                    dic_img[e[:-4]] = l_band
+
+                self.dict = dic_img
+                self.dim = np.shape(gdal.Open(path_file[0]).ReadAsArray())
+                self.product = product
+                self.lieu = lieu
+
+            if state_stack is False:
+                path_img = pathdossier
+
+                ds = gdal.Open(path_img).ReadAsArray()
+
+                self.band = ds
+                self.product = product
+                self.lieu = lieu
 
     def CropVigSta(self, TailleVignette, Path_Output, Zcouvert):
 
@@ -344,7 +387,7 @@ class ImgData:
 
                                 countband += 1
 
-            elif self.product == "SIMG":
+            elif self.product == "Single_img":
 
                 count = 0
 
@@ -398,6 +441,70 @@ class ImgData:
                                     else:
                                         continue
 
+            elif self.product == "Multi_img":
+
+                ar10 = self.dict
+
+                ar10 = ar10.values()
+                print(self.dim)
+                count = 0
+
+                for x in range(ceil(np.shape(self.dim)[1] / (ratio_taillevignette[2] * Zcouvert))):
+
+                    for y in range(ceil(np.shape(self.dim)[2] / (ratio_taillevignette[2] * Zcouvert))):
+
+                        count += 1
+
+                        countband = 2
+
+                        for e in ar10:
+
+                                    count += 1
+
+                                    countband = 2
+
+                                    if x == 0:
+
+                                        vign = e[int((x * ratio_taillevignette[2])): int(
+                                            (x + 1) * ratio_taillevignette[2]),
+                                               int(((y * ratio_taillevignette[2]) * Zcouvert)):int(
+                                                   (y * ratio_taillevignette[2]) * Zcouvert) + (
+                                                                                               ratio_taillevignette[2])]
+
+                                        if vign.shape[0] == ratio_taillevignette[2] and vign.shape[1] == \
+                                                ratio_taillevignette[2]:
+                                            new_key = str(self.product) + '_' + str(
+                                                vign.shape[0]) + '_' + str('10m') \
+                                                      + '_' + 'B' + str(countband) + '_' + (
+                                                              4 - len(str(count))) * '0' + str(count) + '_' + str(
+                                                self.lieu)
+
+                                            Image.fromarray(vign).save(os.path.join(Path_Output, new_key) + '.tif')
+
+                                            countband += 1
+                                    else:
+
+                                        vign = e[int((x * ratio_taillevignette[2]) * Zcouvert):int(
+                                            ((x * ratio_taillevignette[2]) * Zcouvert) + (ratio_taillevignette[2])),
+                                               int(((y * ratio_taillevignette[2]) * Zcouvert)):int(
+                                                   ((((y)) * ratio_taillevignette[2]) * Zcouvert) + (
+                                                       ratio_taillevignette[2]))]
+
+                                        if vign.shape[0] == ratio_taillevignette[2] and vign.shape[1] == \
+                                                ratio_taillevignette[2]:
+
+                                            new_key = str(self.product) + '_' + str(
+                                                vign.shape[0]) + '_' + str('10m') \
+                                                      + '_' + 'B' + str(countband) + '_' + (
+                                                              4 - len(str(count))) * '0' + str(count) + '_' + str(
+                                                self.lieu)
+
+                                            Image.fromarray(vign).save(os.path.join(Path_Output, new_key) + '.tif')
+
+                                            countband += 1
+                                        else:
+                                            continue
+
 
         except NotADirectoryError:
             print("Crop Statique ne marche pas!!!")
@@ -443,14 +550,14 @@ class ImgData:
 
             path = [os.path.join(PathDossier, path) for path in L]
 
-            print(path)
-            """
+
+
             for e in regroupID.values():
                 for i in e :
                     pathVign = os.path.join(PathDossier,i)
                     for p in path:
                         sh.move(pathVign,p)
-            """
+
         except ValueError :
             print('Pas bon')
             pass
